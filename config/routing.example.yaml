@@ -1,0 +1,35 @@
+version: 1
+
+settings:
+  default_fallback: "00_Inbox/Inbox.md"
+  automatic_folder_creation: false
+  explicit_folder_creation: true
+  scoped_search_first: true
+
+domains:
+
+  homelab:
+    path: "20_Homelab"
+
+    topics:
+      immich:
+        path: "20_Homelab/Immich"
+        aliases:
+          - immich
+          - photo server
+
+  shopping:
+    path: "60_Alltag/Einkaufen"
+    target_file: "60_Alltag/Einkaufen/Einkaufsliste.md"
+    aliases:
+      - einkaufen
+      - einkauf
+      - kaufen
+
+  todos:
+    path: "70_Organisation/Todos"
+    target_file: "70_Organisation/Todos/Todos.md"
+
+  reminders:
+    path: "70_Organisation/Erinnerungen"
+    target_file: "70_Organisation/Erinnerungen/Erinnerungen.md"

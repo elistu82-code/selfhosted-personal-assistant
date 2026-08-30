@@ -25,46 +25,21 @@ Das Zielbild umfasst unter anderem:
 - kontrollierte Hintergrundjobs mit niedriger Priorität
 - später optional ein sicherer nächtlicher Server-Neustart nach Idle-Prüfung
 
-## Architektur
+## Aufbau
 
-```text
-Discord / später optional Matrix
-              |
-              v
-      Messenger Adapter
-              |
-              v
-     Personal Assistant Core
-              |
-      +-------+--------+
-      |                |
-      v                v
- Fast Router      Local LLM Fallback
-      |                |
-      +-------+--------+
-              |
-              v
-        Intent Executor
-              |
-   +----------+-----------+----------------+
-   |          |           |                |
-   v          v           v                v
-Shopping    Todos      Memory          zukünftige
-                         |             Integrationen
-                         |
-             +-----------+-----------+
-             |                       |
-             v                       v
-       Memory Write            Scope-first Search
-             |
-             v
-     Markdown / Obsidian Vault
-             |
-             v
-       Nightly Maintenance
-```
+Der Bot läuft aktuell über Discord. Eingehende Nachrichten werden zuerst mit normalen Python-Regeln geprüft. Wenn eine Nachricht dort nicht eindeutig erkannt wird, kann als Fallback das lokale Ollama-Modell verwendet werden. Die erkannte Aktion wird anschließend wieder von normalem Python-Code ausgeführt.
 
-Die Messenger-Schicht ist bewusst vom eigentlichen Assistant-Core getrennt. Dadurch kann später ein anderer Messenger angebunden werden, ohne Memory-, Routing-, Todo- oder Kalenderlogik neu entwickeln zu müssen.
+Die wichtigsten Teile des Projekts sind aktuell:
+
+- `src/adapters/discord.py` für die Verbindung zu Discord
+- `src/core.py` als zentrale Verarbeitung einer Nachricht
+- `src/bot/fast_router.py` für schnelle, eindeutige Befehle ohne LLM
+- `src/llm/intent_parser.py` für den optionalen Ollama-Fallback
+- `src/tasks/` für Einkaufsliste und Todos
+- `src/memory/` für Schreiben, Routing und Suche im Obsidian-Vault
+- `src/jobs/nightly.py` für die nächtliche Wartung
+
+Die Messenger-Anbindung ist vom Rest getrennt. Dadurch kann später beispielsweise Discord durch Matrix ergänzt oder ersetzt werden, ohne die Memory- oder Todo-Funktionen neu bauen zu müssen.
 
 ## Warum aktuell Discord statt Matrix?
 

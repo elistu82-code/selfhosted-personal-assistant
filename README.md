@@ -98,19 +98,48 @@ kontrollierte Aktion
 
 Das Sprachmodell führt selbst keine Aktionen aus. Es klassifiziert ausschließlich die Eingabe. Erlaubte Aktionen, Scopes und Zielpfade werden anschließend durch normalen Python-Code validiert.
 
+Auf der aktuellen Homelab-Hardware ist die lokale LLM-Inferenz bewusst stark ressourcenlimitiert. Der LLM-Pfad ist deshalb als experimenteller Fallback gedacht; deterministische Funktionen bleiben davon unabhängig.
+
 ## Memory-Konzept
 
 Obsidian-kompatible Markdown-Dateien bilden die Source of Truth. Die Ordnerstruktur ist kontrolliert; das System darf nicht beliebig neue Verzeichnisse erzeugen.
 
-Unklare Eingaben landen zunächst in einer Inbox. Geplant ist eine nächtliche Verarbeitung, die unter anderem:
+### Scope-first Memory
 
-- Inbox-Einträge klassifiziert
-- ähnliche Notizen erkennt
-- Duplikate konsolidiert
-- den aktuellen Wissensstand zusammenfasst
-- ältere Rohinformationen sicher archiviert
-- Suchindizes aktualisiert
-- Backups vor Wartungsschritten ausführt
+Die nächste Kernfunktion ist eine Scope-first-Suche. Wird beispielsweise nach `Immich` gefragt, durchsucht der Assistant zuerst ausschließlich den registrierten Immich-Bereich und nicht den gesamten Vault.
+
+```text
+"Was hatte ich zu Immich notiert?"
+        |
+        v
+Scope-Erkennung: immich
+        |
+        v
+20_Homelab/Immich/
+        |
+        v
+lokale Suche und Ranking
+```
+
+Das reduziert unnötige Suchräume, verhindert Vermischungen zwischen Themen und bildet die Grundlage für spätere Zusammenfassungen.
+
+### Geplante Nachtjobs
+
+Nach der Scope-first-Suche wird eine nächtliche Wartungspipeline umgesetzt. Sie soll nur Hintergrundarbeiten übernehmen und wichtige Serverdienste nicht verdrängen.
+
+Geplant sind:
+
+- Inbox-Einträge prüfen und nach Möglichkeit vorhandenen Scopes zuordnen
+- ähnliche oder doppelte Notizen erkennen
+- Duplikat-Kandidaten zusammenführen bzw. konsolidieren
+- aktuelle Themenstände zusammenfassen
+- Rohinformationen bzw. ältere Versionen sicher erhalten oder archivieren
+- Suchindizes aktualisieren
+- Wartungsprotokolle schreiben
+- Backups vor schreibenden Wartungsschritten berücksichtigen
+- Hintergrundjobs mit niedriger Priorität ausführen
+
+Ein automatischer Neustart des Servers ist erst vorgesehen, wenn zuverlässige Idle-Prüfungen für laufende Streams, Schreibvorgänge und andere wichtige Jobs vorhanden sind.
 
 ## Ressourcenstrategie
 
@@ -119,7 +148,7 @@ Der Assistant teilt sich den Server mit anderen Homelab-Diensten. Deshalb werden
 ```text
 HIGH
 - Messenger
-- Kalender / Erinnerungen
+- spätere Kalender- / Erinnerungsfunktionen
 - Memory-Suche
 - wichtige laufende Dienste
 
@@ -151,22 +180,30 @@ Bereits umgesetzt bzw. im aktuellen Entwicklungsstand vorhanden:
 - Einkaufsliste
 - Todo-Grundfunktionen
 - Fast Router für häufige eindeutige Formulierungen
-- lokales LLM als Fallback für freie Sprache
+- lokales LLM als experimenteller Fallback für freie Sprache
 - strukturierte Intent-Validierung
 - Schutz vor unbekannten Scopes
+- Discord als aktueller Messenger-Adapter in der laufenden Entwicklung
 
-Als Nächstes:
+### Aktuelle Entwicklungspriorität
 
-1. Discord-Adapter
-2. Scope-first Memory-Suche
-3. Fuzzy Matching und robustere Todo-Erledigung
-4. Erinnerungen und Scheduler
-5. Nextcloud-CalDAV-Integration
-6. nächtliche Inbox-Verarbeitung und Deduplication
-7. Job-Priorisierung und ressourcenschonende Wartung
-8. sicherer Neustart nur bei tatsächlichem Idle-Zustand
-9. PDF- und Paperless-Integration
+1. Scope-first Memory-Suche fertigstellen
+2. nächtliche Wartungs-, Inbox- und Konsolidierungsjobs als funktionsfähigen Prototyp umsetzen
+3. Projektstand dokumentieren und als reproduzierbare Demo stabilisieren
+
+### Später geplante Erweiterungen
+
+Diese Funktionen gehören weiterhin zum Zielbild, werden aber erst nach dem aktuellen Portfolio-Milestone umgesetzt:
+
+- robustere Todo-Erledigung und erweitertes Fuzzy Matching
+- Erinnerungen und Scheduler
+- Nextcloud-CalDAV-Integration zum Lesen und Schreiben von Kalendereinträgen
+- Datei- und PDF-Funktionen, einschließlich Konvertieren und Zusammenführen
+- Paperless-ngx-Integration
+- erweiterter Job Manager mit HIGH/NORMAL/BACKGROUND-Prioritäten
+- sichere Idle-Prüfung und optionaler kontrollierter Nacht-Neustart
+- optionaler Matrix-Adapter als stärker selbst gehostete Messenger-Alternative
 
 ## Status
 
-Work in Progress. Das Projekt wird schrittweise erweitert, wobei jede neue Funktion zuerst deterministisch abgesichert und anschließend in die natürliche Sprachverarbeitung integriert wird.
+Work in Progress. Der aktuelle Portfolio-Milestone konzentriert sich bewusst auf die Kernarchitektur: Discord als Messenger-Adapter, kontrolliertes Routing, lokales LLM als Fallback, Scope-first Memory sowie eine ressourcenschonende nächtliche Wartungspipeline. Weitere Integrationen sind dokumentiert und für spätere Ausbaustufen vorgesehen.

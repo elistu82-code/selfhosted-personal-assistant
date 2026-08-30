@@ -1,0 +1,9 @@
+[Unit]
+Description=Run Personal Assistant Nightly Maintenance
+
+[Timer]
+OnCalendar=*-*-* 03:15:00 Europe/Berlin
+Persistent=true
+
+[Install]
+WantedBy=timers.target

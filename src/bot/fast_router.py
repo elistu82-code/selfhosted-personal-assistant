@@ -321,17 +321,58 @@ def todo_intent(text: str) -> IntentResult | None:
         confidence=0.93,
     )
 
+def memory_search_intent(
+    text: str,
+) -> IntentResult | None:
+
+    lower = normalize(text)
+    scope = fuzzy_scope(text)
+
+    if not scope:
+        return None
+
+    markers = (
+        "was weiss ich",
+        "was habe ich",
+        "was hab ich",
+        "was hatte ich",
+        "was steht",
+        "was ist gespeichert",
+        "was habe ich notiert",
+        "was hab ich notiert",
+        "was hatte ich notiert",
+        "zeig mir",
+        "zeige mir",
+        "suche",
+        "/search",
+    )
+
+    if not any(
+        marker in lower
+        for marker in markers
+    ):
+        return None
+
+    return IntentResult(
+        intent="memory_search",
+        scope=scope,
+        items=[],
+        content=text.strip(),
+        priority="normal",
+        confidence=0.98,
+    )
 
 def parse_fast_intent(
     text: str,
 ) -> IntentResult | None:
 
     handlers = (
-        shopping_list_intent,
-        shopping_remove_intent,
-        shopping_add_intent,
-        todo_intent,
-    )
+    shopping_list_intent,
+    shopping_remove_intent,
+    shopping_add_intent,
+    todo_intent,
+    memory_search_intent,
+)
 
     for handler in handlers:
         result = handler(text)

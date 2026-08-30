@@ -1,0 +1,16 @@
+[Unit]
+Description=Personal Assistant Nightly Maintenance
+
+[Service]
+Type=oneshot
+User=ely
+Group=ely
+
+WorkingDirectory=/data/personal-assistant
+EnvironmentFile=/data/personal-assistant/.env
+
+ExecStart=/data/personal-assistant/.venv/bin/python -m src.jobs.nightly
+
+Nice=15
+CPUWeight=10
+IOSchedulingClass=idle

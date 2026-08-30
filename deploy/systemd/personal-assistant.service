@@ -1,0 +1,22 @@
+[Unit]
+Description=Self-Hosted Personal Assistant
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=ely
+Group=ely
+
+WorkingDirectory=/data/personal-assistant
+EnvironmentFile=/data/personal-assistant/.env
+
+ExecStart=/data/personal-assistant/.venv/bin/python -m src.adapters.discord
+
+Restart=on-failure
+RestartSec=5
+
+TimeoutStopSec=20
+
+[Install]
+WantedBy=multi-user.target

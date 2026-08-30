@@ -12,7 +12,7 @@ from src.tasks.todos import (
     complete_todo,
     list_todos,
 )
-
+from src.memory.search import search_memory
 
 logger = logging.getLogger(__name__)
 
@@ -237,12 +237,39 @@ async def execute_intent(
         )
         return
 
-    # Memory-Suche kommt als nächstes
+    # Memory durchsuchen
     if result.intent == "memory_search":
-        await message.reply_text(
-            "Die Memory-Suche habe ich verstanden. "
-            "Die bauen wir als nächsten Schritt ein."
+
+        if not result.scope:
+            await message.reply_text(
+                "Ich konnte kein eindeutiges Thema "
+                "für die Suche erkennen."
+            )
+            return
+
+        results = search_memory(
+            scope_name=result.scope,
+            query=result.content,
+            limit=6,
         )
+
+        if not results:
+            await message.reply_text(
+                f"Keine passenden Einträge "
+                f"unter {result.scope} gefunden."
+            )
+            return
+
+        lines = [
+            item["text"]
+            for item in results
+        ]
+
+        await message.reply_text(
+            f"Memory [{result.scope}]:\n\n"
+            + "\n".join(lines)
+        )
+
         return
 
     await message.reply_text(

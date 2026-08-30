@@ -5,3 +5,4 @@ python-dotenv>=1.0
 python-telegram-bot>=21.0,<23
 PyYAML>=6.0
 rapidfuzz>=3.0
+discord.py>=2.7,<3

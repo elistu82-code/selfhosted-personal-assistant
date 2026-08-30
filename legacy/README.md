@@ -1,17 +1,17 @@
-# Legacy Prototype
+# Legacy-Prototyp
 
-This directory contains code from an earlier prototype of the memory system.
+Dieses Verzeichnis enthält Code aus einem früheren Prototyp des Memory-Systems.
 
-The prototype used a scoring-based memory manager and an MCP interface.
+Der Prototyp verwendete einen scoring-basierten Memory-Manager sowie eine MCP-Schnittstelle.
 
-The current application is being redesigned around:
+Die aktuelle Anwendung wird stattdessen um folgende Prinzipien herum neu aufgebaut:
 
-- a controlled Markdown vault
-- deterministic routing
-- scoped memory search
-- a Telegram interface
-- optional local language-model intent classification
+- kontrollierter Markdown-/Obsidian-Vault
+- deterministisches Routing
+- thematisch begrenzte Memory-Suche
+- modularer Messenger-Adapter
+- lokales Sprachmodell nur als optionaler Intent-Fallback
 
-Code from this prototype is reused selectively and refactored into `src/`.
+Code aus dem Prototyp wird nur selektiv übernommen und für die aktuelle Architektur unter `src/` refaktoriert.
 
-The legacy implementation is not part of the current application runtime.
+Die Legacy-Implementierung ist kein Bestandteil des aktuellen Produktivbetriebs.
